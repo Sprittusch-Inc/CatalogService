@@ -51,4 +51,53 @@ public class Item
             return false;
         }
     }
+
+    public void UpdateItem(int itemId, string category, string userId, string itemDesc, List<FileInfo> imageList)
+    {
+        if (itemId == ItemId)
+        {
+            Category = category;
+            UserId = userId;
+            ItemDesc = itemDesc;
+            ImageList = imageList;
+        }
+        // Handle the error condition or throw an exception, e.g., InvalidItemIdException.
+        else
+        {
+            // Handle the error condition or throw an exception, e.g., InvalidItemIdException.
+            // Alternatively, you can choose to do nothing and simply return from the method.
+            throw new ArgumentException("ItemId does not match");
+        }
+        
+    }
+
+    public void DeleteItem(int itemId, List<Item> list)
+    {
+        if (itemId == ItemId)
+        {
+            list.Remove(this);
+        }
+        // Handle the error condition or throw an exception, e.g., InvalidItemIdException.
+        else
+        {
+            // Handle the error condition or throw an exception, e.g., InvalidItemIdException.
+            // Alternatively, you can choose to do nothing and simply return from the method.
+            throw new ArgumentException("ItemId does not match");
+        }
+    }
+
+    public void GetItem(int itemId, List<Item> list)
+    {
+        if (itemId == ItemId)
+        {
+            list.Contains(this);
+        }
+        // Handle the error condition or throw an exception, e.g., InvalidItemIdException.
+        else
+        {
+            // Handle the error condition or throw an exception, e.g., InvalidItemIdException.
+            // Alternatively, you can choose to do nothing and simply return from the method.
+            throw new ArgumentException("ItemId does not match");
+        }
+    }
 }
