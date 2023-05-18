@@ -3,24 +3,28 @@ namespace Catalog.Models;
 public class Item
 {
     public int ItemId { get; set; }
-    public string? CategoryId { get; set; }
+    public string? Category { get; set; }
     public string? UserId { get; set; }
     public string? ItemDesc { get; set; }
     public List<FileInfo>? ImageList { get; set; }
 
     // Constructor
-    public Item(int itemId, string? categoryId, string? userId, string itemDesc, List<FileInfo>? imgList)
+    public Item(int itemId, string? category, string? userId, string itemDesc, List<FileInfo>? imgList)
     {
         // Exceptions
         if (itemId <= 0) throw new ArgumentException("ItemId cannot be less or equal to 0");
-        if (categoryId == null) throw new ArgumentException("CategoryId cannot be null");
-        if (categoryId.Length - 1 > 2) throw new ArgumentException("CategoryId cannot exceed 2 characters");
+        if (category == null) throw new ArgumentException("Category cannot be null");
         if (userId == null) throw new ArgumentException("UserId cannot be null");
         if (itemDesc == null) throw new ArgumentException("ItemDescription cannot be null");
+        
+        if (char.IsPunctuation(category[0]) || char.IsWhiteSpace(category[0]) || char.IsDigit(category[0]) || char.IsSymbol(category[0]))
+        {
+            throw new ArgumentException("Category cannot start with punctuation, spaces, digits or symbols");
+        }
 
         // Creation
         this.ItemId = itemId;
-        this.CategoryId = categoryId;
+        this.Category = category;
         this.UserId = userId;
         this.ItemDesc = itemDesc;
         this.ImageList = imgList;
