@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace Catalog.Test;
@@ -24,7 +25,7 @@ public class Tests
     public void ConstructItem_NullValues(int itemId, string category, string userId, string itemDesc)
     {
         // Klargøring
-        List<FileInfo> imgList = new();
+        List<IFormFile> imgList = new();
 
         // Asserts
         Assert.Throws<ArgumentException>(() =>
@@ -41,7 +42,7 @@ public class Tests
     public void ConstructItem_InvalidCategory(int itemId, string category, string userId, string itemDesc)
     {
         // Klargøring
-        List<FileInfo> imgList = new();
+        List<IFormFile> imgList = new();
 
         // Asserts
         Assert.Throws<ArgumentException>(() =>
@@ -56,7 +57,7 @@ public class Tests
     public void ConstructItem_ValidSubmit(int itemId, string category, string userId, string itemDesc)
     {
         // Klargøring
-        List<FileInfo> imgList = new();
+        List<IFormFile> imgList = new();
 
         // Oprettelse
         Item item = new Item(itemId, category, userId, itemDesc, imgList);
@@ -131,7 +132,4 @@ public class Tests
         Assert.IsTrue(list?[1].ItemDesc == item.ItemDesc);
         Assert.IsTrue(list?[1].ImageList?.Count == item.ImageList?.Count);
     }
-
-
-
 }

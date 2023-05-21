@@ -1,15 +1,22 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
+
 namespace Catalog.Models;
 
 public class Item
 {
+    [BsonId]
+    public ObjectId Id { get; set; }
     public int ItemId { get; set; }
     public string? Category { get; set; }
     public string? UserId { get; set; }
     public string? ItemDesc { get; set; }
-    public List<FileInfo>? ImageList { get; set; }
+    public List<IFormFile>? ImageList { get; set; }
+    public List<ImageData>? ImageDataList { get; set; }
 
-    // Constructor
-    public Item(int itemId, string? category, string? userId, string itemDesc, List<FileInfo>? imgList)
+    // Constructors
+    public Item(int itemId, string? category, string? userId, string itemDesc, List<IFormFile>? imgList)
     {
         // Exceptions
         if (itemId <= 0) throw new ArgumentException("ItemId cannot be less or equal to 0");
@@ -30,6 +37,9 @@ public class Item
         this.ImageList = imgList;
     }
 
+    public Item()
+    {
+    }
 
     public bool CreateItem(Item item, List<Item> list, ILogger logger)
     {
@@ -50,5 +60,12 @@ public class Item
             logger.LogError(ex.Message);
             return false;
         }
+    }
+
+    public bool ItemExists(int itemId, ILogger logger, IMongoCollection<Item> collection){
+        var filter = Builders<Item>.Filter.Eq("ItemId", itemId);
+        bool itemExists = collection.Find(filter).Any();
+        
+        return itemExists;
     }
 }
