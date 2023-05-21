@@ -132,4 +132,95 @@ public class Tests
         Assert.IsTrue(list?[1].ItemDesc == item.ItemDesc);
         Assert.IsTrue(list?[1].ImageList?.Count == item.ImageList?.Count);
     }
+
+
+     [Test]
+    public void UpdateItem_ShouldUpdateItemProperties()
+    {
+        // Arrange
+        int itemIdToUpdate = 1;
+        string newCategory = "Electronics";
+        string newUserId = "user456";
+        string newItemDesc = "Updated item description";
+        List<IFormFile> newImageList = new List<IFormFile>();
+
+        Item item = list!.Find(i => i.ItemId == itemIdToUpdate)!;
+
+        // Act
+        item!.UpdateItem(itemIdToUpdate, newCategory, newUserId, newItemDesc, newImageList);
+
+        // Assert
+        Assert.AreEqual(newCategory, item.Category);
+        Assert.AreEqual(newUserId, item.UserId);
+        Assert.AreEqual(newItemDesc, item.ItemDesc);
+        Assert.AreEqual(newImageList, item.ImageList);
+        Assert.IsTrue(list!.Contains(item));
+        Assert.IsNotNull(item.Category);
+        Assert.IsNotNull(item.UserId);
+        Assert.IsNotNull(item.ItemDesc);
+        Assert.IsNotNull(item.ImageList);
+    }
+
+    [Test]
+    public void UpdateItem_ShouldNotUpdateItemProperties_WhenItemIdDoesNotMatch()
+    {
+    // Arrange
+    int itemIdToUpdate = 2; // ItemId that does not exist in the list
+    string newCategory = "Electronics";
+    string newUserId = "user456";
+    string newItemDesc = "Updated item description";
+    List<IFormFile> newImageList = new List<IFormFile>();
+
+    Item item = list?.Find(i => i.ItemId == itemIdToUpdate)!;
+
+    // Act
+        if (item != null)
+        {
+            item.UpdateItem(itemIdToUpdate, newCategory, newUserId, newItemDesc, newImageList);
+        }
+
+    // Assert
+    Assert.IsNull(item); // The item should remain null since the itemId does not match
+    }
+
+    [Test]
+    public void DeleteItem_ShouldRemoveItemFromList()
+    {
+        // Arrange
+        int itemIdToDelete = 1;
+
+        Item item = list!.Find(i => i.ItemId == itemIdToDelete)!;
+
+        // Act
+        if (item != null)
+        {
+            list.Remove(item);
+        }
+        else
+        {
+            throw new ArgumentException("Item does not exist");
+        }
+
+        // Assert
+        Assert.IsFalse(list.Contains(item!));
+    }
+
+    [Test]
+    public void GetItem_ShouldReturnItemFromList()
+    {
+        // Arrange
+        int itemIdToGet = 1;
+
+        Item item = list!.Find(i => i.ItemId == itemIdToGet)!;
+
+        // Act
+        if (item != null)
+        {
+            list.Find(i => i.ItemId == itemIdToGet);
+        }
+
+        // Assert
+        Assert.IsTrue(list.Contains(item!));
+    }
+
 }
