@@ -37,6 +37,32 @@ public class ItemService
         }
     }
 
+    public async Task<List<Item>> GetItemsInCategoryAsync(string categoryCode)
+    {
+        try
+        {
+            if (categoryCode.Length > 2)
+            {
+                categoryCode = categoryCode.Substring(0, 2).ToUpper();
+            }
+
+            var filter = Builders<Item>.Filter.Eq("Category", categoryCode.ToUpper());
+            List<Item> itemsInCat = await _collection.Find(filter).ToListAsync();
+
+            if (itemsInCat.Count < 1)
+            {
+                throw new Exception($"No items were found in category; {categoryCode}");
+            }
+
+            return itemsInCat;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            throw;
+        }
+    }
+
 
     public async Task<Item> GetItemByIdAsync(int itemId)
     {
@@ -106,7 +132,7 @@ public class ItemService
                 // Assign imageData til model
                 model.ImageList = null; // Tømmer listen for IFormFiles
             }
-
+            model.Category = model.Category?.Substring(0, 2).ToUpper();
             await _collection.InsertOneAsync(model);
 
             return Results.Ok($"A new item was appended and given ItemId: {model.ItemId}"); ;
@@ -139,7 +165,7 @@ public class ItemService
                 if (model.ImageList?.Count > 0)
                 {
                     var update = Builders<Item>.Update
-                        .Set(x => x.Category, model.Category.ToLower())
+                        .Set(x => x.Category, model.Category.Substring(0, 2).ToUpper())
                         .Set(x => x.ItemDesc, model.ItemDesc.ToLower())
                         .Set(x => x.ImageDataList, await SaveImages(model.ImageList!));
                     await _collection.UpdateOneAsync(filter, update);
@@ -158,6 +184,29 @@ public class ItemService
         catch (Exception ex)
         {
             // Håndter eventuelle fejl
+            _logger.LogError(ex.Message);
+            return Results.Problem($"ERROR: {ex.Message}", statusCode: 500);
+        }
+    }
+
+
+    // DELETE
+    public async Task<IResult> DeleteItemAsync(int itemId)
+    {
+        try
+        {
+            var filter = Builders<Item>.Filter.Eq("ItemId", itemId);
+            var itemlist = await _collection.Find(filter).ToListAsync();
+            Item item = itemlist.FirstOrDefault()!;
+            if (item == null){
+                throw new Exception($"Item was not found. ItemId: {itemId}");
+            }
+            
+            await _collection.DeleteOneAsync(filter);
+            return Results.Ok($"An item with the ItemId of {itemId} was deleted.");
+        }
+        catch (Exception ex)
+        {
             _logger.LogError(ex.Message);
             return Results.Problem($"ERROR: {ex.Message}", statusCode: 500);
         }

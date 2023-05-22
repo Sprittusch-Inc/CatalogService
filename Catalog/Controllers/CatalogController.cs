@@ -41,6 +41,12 @@ public class CatalogController : ControllerBase
         return await _service.GetAllItemsAsync();
     }
 
+    [HttpGet("category/{categoryCode}")]
+    public async Task<List<Item>> GetItemsInCategory(string categoryCode)
+    {
+        return await _service.GetItemsInCategoryAsync(categoryCode);
+    }
+
     [HttpGet("items/{itemId}")]
     public async Task<Item> GetItemById(int itemId)
     {
@@ -60,6 +66,11 @@ public class CatalogController : ControllerBase
     public async Task<IResult> PutItem([FromForm] Item model, int itemId)
     {
         return await _service.UpdateItemAsync(model, itemId);
+    }
+
+    [HttpDelete("items/{itemId}")]
+    public async Task<IResult> DeleteItemAsync(int itemId){
+        return await _service.DeleteItemAsync(itemId);
     }
 }
 
