@@ -132,6 +132,14 @@ public class ItemService
                 // Assign imageData til model
                 model.ImageList = null; // Tømmer listen for IFormFiles
             }
+
+            int highestId = ((int)_collection.CountDocuments(Builders<Item>.Filter.Empty)) + 1;
+            while (_collection.Find(Builders<Item>.Filter.Eq("ItemId", highestId)).Any() == true)
+            {
+                highestId++;
+            }
+            model.ItemId = highestId;
+
             model.Category = model.Category?.Substring(0, 2).ToUpper();
             await _collection.InsertOneAsync(model);
 
@@ -198,10 +206,11 @@ public class ItemService
             var filter = Builders<Item>.Filter.Eq("ItemId", itemId);
             var itemlist = await _collection.Find(filter).ToListAsync();
             Item item = itemlist.FirstOrDefault()!;
-            if (item == null){
+            if (item == null)
+            {
                 throw new Exception($"Item was not found. ItemId: {itemId}");
             }
-            
+
             await _collection.DeleteOneAsync(filter);
             return Results.Ok($"An item with the ItemId of {itemId} was deleted.");
         }
