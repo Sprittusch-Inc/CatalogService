@@ -12,8 +12,13 @@ NLog.LogManager.Setup()
 logger.Debug("init main");
 
 var builder = WebApplication.CreateBuilder(args);
+IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+configurationBuilder.AddJsonFile("appsettings.json");
+configurationBuilder.AddEnvironmentVariables();
+IConfiguration config = configurationBuilder.Build();
 
-Vault vault = new();
+
+Vault vault = new Vault(config);
 
 string myIssuer = vault.GetSecret("authentication", "issuer").Result;
 string mySecret = vault.GetSecret("authentication", "secret").Result;
@@ -24,9 +29,11 @@ builder.Services
     options.TokenValidationParameters = new TokenValidationParameters()
     {
         ValidateIssuer = true,
+        ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = myIssuer,
+        ValidateAudience = "https://localhost",
         IssuerSigningKey =
     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(mySecret))
     };
