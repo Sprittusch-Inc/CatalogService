@@ -21,11 +21,12 @@ public class CatalogController : ControllerBase
         _logger = logger;
         _config = config;
 
-        // Henter connectionstring fra appsettings.json
-        string connectionString = config.GetConnectionString("MongoDB")!;
+        //Henter connectionstring fra vault
+        Vault vault = new Vault(config);
+        string con = vault.GetSecret("dbconnection", "constring").Result;
 
         // Opret forbindelse til mongoDB
-        var client = new MongoClient(connectionString);
+        var client = new MongoClient(con);
 
         // Hent DB
         var database = client.GetDatabase("CatalogDB");
@@ -36,12 +37,22 @@ public class CatalogController : ControllerBase
 
     // GET
     [HttpGet("items")]
+    [AllowAnonymous]
+    
     public async Task<List<Item>> GetItems()
     {
         return await _service.GetAllItemsAsync();
     }
 
+    [HttpGet("category/{categoryCode}")]
+    [AllowAnonymous]
+    public async Task<List<Item>> GetItemsInCategory(string categoryCode)
+    {
+        return await _service.GetItemsInCategoryAsync(categoryCode);
+    }
+
     [HttpGet("items/{itemId}")]
+    [AllowAnonymous]
     public async Task<Item> GetItemById(int itemId)
     {
         return await _service.GetItemByIdAsync(itemId);
@@ -49,6 +60,7 @@ public class CatalogController : ControllerBase
 
     // CREATE
     [HttpPost("items")]
+    [Authorize(Roles = "Admin")]
     public async Task<IResult> PostItem([FromForm] Item model)
     {
         return await _service.PostItemAsync(model);
@@ -57,9 +69,16 @@ public class CatalogController : ControllerBase
 
     // UPDATE
     [HttpPut("items/{itemId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IResult> PutItem([FromForm] Item model, int itemId)
     {
         return await _service.UpdateItemAsync(model, itemId);
+    }
+
+    [HttpDelete("items/{itemId}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IResult> DeleteItemAsync(int itemId){
+        return await _service.DeleteItemAsync(itemId);
     }
 }
 

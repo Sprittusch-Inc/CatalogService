@@ -41,6 +41,16 @@ public class Item
     {
     }
 
+    // Methods
+    public bool ItemExists(int itemId, ILogger logger, IMongoCollection<Item> collection)
+    {
+        var filter = Builders<Item>.Filter.Eq("ItemId", itemId);
+        bool itemExists = collection.Find(filter).Any();
+
+        return itemExists;
+    }
+
+
     public bool CreateItem(Item item, List<Item> list, ILogger logger)
     {
         try
@@ -62,14 +72,6 @@ public class Item
         }
     }
 
-    // Brugbar!
-    public bool ItemExists(int itemId, ILogger logger, IMongoCollection<Item> collection)
-    {
-        var filter = Builders<Item>.Filter.Eq("ItemId", itemId);
-        bool itemExists = collection.Find(filter).Any();
-
-        return itemExists;
-    }
 
     public void UpdateItem(int itemId, string category, string userId, string itemDesc, List<IFormFile> imageList)
     {
@@ -89,6 +91,7 @@ public class Item
         }
     }
 
+
     public void DeleteItem(int itemId, List<Item> list)
     {
         if (itemId == ItemId)
@@ -103,6 +106,7 @@ public class Item
             throw new ArgumentException("ItemId does not match");
         }
     }
+
 
     public void GetItem(int itemId, List<Item> list)
     {
