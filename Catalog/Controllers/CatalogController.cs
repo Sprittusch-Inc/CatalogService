@@ -23,7 +23,7 @@ public class CatalogController : ControllerBase
 
         //Henter connectionstring fra vault
         Vault vault = new Vault(config);
-        var con = vault.GetSecret("dbconnection", "constring");
+        string con = vault.GetSecret("dbconnection", "constring").Result;
 
         // Opret forbindelse til mongoDB
         var client = new MongoClient(con);

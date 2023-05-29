@@ -224,8 +224,8 @@ public class ItemService
                     _logger.LogInformation("Updating item in database...");
                     await _collection.UpdateOneAsync(filter, update);
                 }
-                _logger.LogInformation($"Successfully updated item with ItemId {model.ItemId}.");
-                return Results.Ok($"An item with the ItemId of {model.ItemId} was updated.");
+                _logger.LogInformation($"Successfully updated item with ItemId {itemId}.");
+                return Results.Ok($"An item with the ItemId of {itemId} was updated.");
             }
         }
         catch (Exception ex)
