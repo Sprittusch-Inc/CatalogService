@@ -7,11 +7,17 @@ namespace Catalog.Services;
 public class ItemService
 {
     private readonly ILogger _logger;
+    private readonly IConfiguration _config;
     private readonly IMongoCollection<Item> _collection;
-    public ItemService(ILogger logger, IMongoCollection<Item> collection)
+    private static string? _imagePath;
+    public ItemService(ILogger logger, IMongoCollection<Item> collection, IConfiguration config)
     {
+        _config = config;
         _logger = logger;
         _collection = collection;
+
+        _imagePath = _config["ImagePath"] ?? "/srv/images";
+        _logger.LogInformation($"ImagePath now set to: {_imagePath}");
     }
 
     public async Task<List<Item>> GetAllItemsAsync()
@@ -111,7 +117,7 @@ public class ItemService
 
                     // Tjek om folder for billeder af en item med itemId findes
                     // Hvis folderen ikke findes, bliver den oprettet.
-                    string itemPath = $"./items/item-{item.ItemId}/"; // KAN SÆTTES SOM SECRET!
+                    string itemPath = $"{_imagePath}/item-{item.ItemId}/"; // KAN SÆTTES SOM SECRET!
                     if (!Directory.Exists(itemPath)) Directory.CreateDirectory(itemPath);
 
                     // Gem billede i en fil

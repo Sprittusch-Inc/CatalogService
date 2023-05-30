@@ -32,7 +32,7 @@ public class CatalogController : ControllerBase
         var database = client.GetDatabase("CatalogDB");
         _collection = database.GetCollection<Item>("Items");
 
-        _service = new ItemService(_logger, _collection);
+        _service = new ItemService(_logger, _collection, _config);
     }
 
     // GET
