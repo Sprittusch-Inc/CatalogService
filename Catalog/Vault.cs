@@ -14,7 +14,7 @@ public class Vault
     public Vault(IConfiguration config)
     {
         _config = config;
-        EndPoint = _config["Vault_Endpoint"];
+        EndPoint = _config["Vault_Endpoint"]!;
         httpClientHandler = new HttpClientHandler();
         httpClientHandler.ServerCertificateCustomValidationCallback =
         (message, cert, chain, sslPolicyErrors) => { return true; };
@@ -45,6 +45,6 @@ public class Vault
 
         var secret = kv2Secret.Data.Data[key];
 
-        return secret.ToString();
+        return secret.ToString()!;
     }
 }

@@ -15,24 +15,28 @@ public class CatalogController : ControllerBase
     private readonly IConfiguration _config;
     private readonly IMongoCollection<Item> _collection;
     private readonly ItemService _service;
+    private static string? _connString;
 
     public CatalogController(ILogger<CatalogController> logger, IConfiguration config)
     {
         _logger = logger;
         _config = config;
+        _connString = config["MongoConnection"];
 
-        //Henter connectionstring fra vault
+        // Vault deployment-issues
+        /*
         Vault vault = new Vault(config);
         string con = vault.GetSecret("dbconnection", "constring").Result;
-
+        */
+        
         // Opret forbindelse til mongoDB
-        var client = new MongoClient(con);
+        var client = new MongoClient(_connString);
 
         // Hent DB
         var database = client.GetDatabase("CatalogDB");
         _collection = database.GetCollection<Item>("Items");
 
-        _service = new ItemService(_logger, _collection);
+        _service = new ItemService(_logger, _collection, _config);
     }
 
     // GET
