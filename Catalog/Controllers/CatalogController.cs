@@ -64,7 +64,8 @@ public class CatalogController : ControllerBase
 
     // CREATE
     [HttpPost("items")]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
+    // [Authorize(Roles = "Admin")]
     public async Task<IResult> PostItem([FromForm] Item model)
     {
         return await _service.PostItemAsync(model);
@@ -73,14 +74,16 @@ public class CatalogController : ControllerBase
 
     // UPDATE
     [HttpPut("items/{itemId}")]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
+    // [Authorize(Roles = "Admin")]
     public async Task<IResult> PutItem([FromForm] Item model, int itemId)
     {
         return await _service.UpdateItemAsync(model, itemId);
     }
 
     [HttpDelete("items/{itemId}")]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
+    // [Authorize(Roles = "Admin")]
     public async Task<IResult> DeleteItemAsync(int itemId){
         return await _service.DeleteItemAsync(itemId);
     }
